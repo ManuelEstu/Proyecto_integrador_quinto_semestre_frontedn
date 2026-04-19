@@ -1,0 +1,15 @@
+:root {
+  --verde-ica: #1a5e30;
+  --verde-boton: #238b45;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background-image: url("./assets/imagenes/fondo.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
