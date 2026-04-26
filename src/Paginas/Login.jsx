@@ -16,7 +16,7 @@ function Login() {
 
   // ─── Estado del formulario ──────────────────────────────────────────────────
   // Cada campo del formulario tiene su propio estado controlado.
-  const [tipoUsuario, setTipoUsuario] = useState('productor');
+  const [tipoUsuario, setTipoUsuario] = useState('Productor');
   const [usuario, setUsuario]         = useState('');
   const [contrasena, setContrasena]   = useState('');
 
@@ -88,10 +88,10 @@ function Login() {
     // ── Redirigir según el tipo de usuario seleccionado en el formulario ──
     // Puedes también usar datos.data.user.rol si el backend lo determina
     const rutas = {
-      productor:   '/menu-productor',
-      propietario: '/menu-propietario',
+      Productor:   '/menu-productor',
+      Propietario: '/menu-propietario',
       Tecnico:     '/menu-tecnico',
-      funcionario: '/menu-funcionario',
+      Funcionario: '/menu-funcionario',
     };
     navigate(rutas[tipoUsuario] ?? '/menu-funcionario');
 

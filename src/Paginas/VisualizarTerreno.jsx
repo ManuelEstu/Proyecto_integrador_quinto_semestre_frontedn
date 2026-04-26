@@ -1,213 +1,241 @@
 import React, { useState, useEffect } from 'react';
 import './VisualizarTerrenos.css';
+import ListaTerrenos from './ListarTerrenos';
+import FormularioTerreno from './FormulariosCrearTerrenos';
+import PrediosAsociados from './PrediosAsociados';
 
-// Función que recibe un parámetro que determina qué datos mostrar (lugares, lotes o predios).
-function LugaresProduccion({ tipo}) {
-  // "lugares" almacena los datos que se van a mostrar
-// "setLugares", función quepermite actualizar el estado
-// Inicia como array vacío porque no hay datos del backend
-    const [lugares, setLugares] = useState([]);
-    //indica si los datos están cargando o no, para mostrar un mensaje de "Cargando..." mientras se obtienen los datos
-    const [cargando, setCargando] = useState(true);
+// Componente principal que maneja la gestión de lugares de producción, lotes y predios
+// Recibe 'tipo' como prop para determinar qué tipo de entidad mostrar
+function LugaresProduccion({ tipo }) {
+    // Estados para manejar los datos y la UI
+    const [lugares, setLugares] = useState([]); // Array con los datos obtenidos del backend
+    const [cargando, setCargando] = useState(true); // Controla si mostrar "Cargando..."
+    const [modo, setModo] = useState('lista'); // 'lista', 'crear', 'asociar'
+    const [itemEditando, setItemEditando] = useState(null); // Item que se está editando o asociando
 
-   //ejecuta una función cuando el componente se monta o cuando el valor de "tipo" cambia. En este caso, se utiliza para simular la obtención de datos del backend y actualizar el estado con esos datos.
+    // Función que obtiene los datos del backend según el tipo (lugares, lotes, predios)
+    // Se ejecuta al montar el componente y cuando cambia el tipo
+    const fetchDatos = async () => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('usuario'));
+        const BASE_URL = 'http://localhost:3001/api';
+
+        try {
+            let url;
+
+            // Determina la URL según el tipo de entidad
+            if (tipo === 'lugares') {
+                url = `${BASE_URL}/locations/lugares/${user.id}`;
+            } else if (tipo === 'lotes') {
+                url = `${BASE_URL}/locations/lotes/${user.id}`;
+            } else if (tipo === 'predios') {
+                url = `${BASE_URL}/locations/predios/${user.id}`;
+            } else {
+                throw new Error('Tipo desconocido');
+            }
+
+            const res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+
+            const data = await res.json();
+            console.log("Datos obtenidos: ", data);
+
+            if (data.status === 'success') {
+                setLugares(data.data); // Actualiza el estado con los datos del backend
+            } else {
+                console.error('Error:', data.message);
+                setLugares([]);
+            }
+        } catch (err) {
+            console.error("Error al obtener datos: ", err.message);
+            setLugares([]);
+        } finally {
+            setCargando(false); // Oculta el indicador de carga
+        }
+    };
+
+    // useEffect que se ejecuta al montar el componente y cuando cambia 'tipo'
+    // Establece el título de la página y carga los datos iniciales
     useEffect(() => {
         document.title = 'Panel de gestión';
-
-        // datos de prueba temporales
-        let datosPrueba = [];
-
-        if (tipo === 'lugares') {
-            datosPrueba = [
-                {
-                    id: 1,
-                    nombre: 'Finca San José',
-                    registroICA: 'ICA-123',
-                    areaTotal: 120,
-                    areaCultivada: 80,
-                    predioCentral: 'Medellín'
-                }
-            ];
-        }
-
-        if (tipo === 'lotes') {
-            datosPrueba = [
-                {
-                    id: 1,
-                    numero: 'Lote A',
-                    area: 10,
-                    tipoCultivo: 'Café',
-                    cantidadPlantas: 500,
-                    fechaSiembra: '2023-01-15',
-                    fechaRecoleccion: '2023-06-30'
-                }
-            ];
-        }
-
-        if (tipo === 'predios') {
-            datosPrueba = [
-                {
-                    id: 1,
-                    nombre: 'Predio Norte',
-                    registroICA: 'ICA-456',
-                    area: 30,
-                    departamento: 'Antioquia',
-                    municipio: 'Medellín',
-                    vereda: 'Vereda El Poblado',
-                    lugarProduccion: 'Finca San José'
-                    
-                }
-            ];
-        }
-
-        setLugares(datosPrueba); //borrar cuando el backend esté listo
-        setCargando(false); //datos cargados
-
-        //BACKEND - DESCOMENTAR CUANDO EL BACKEND ESTÉ LISTO
-        /*
-        const fetchDatos = async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/api/${tipo}`);
-                const data = await response.json();
-                setLugares(data);
-            } catch (error) {
-                console.error('Error:', error);
-            } finally {
-                setCargando(false);
-            }
-        };
-
         fetchDatos();
-        */
-
     }, [tipo]);
 
-  //función que recibe un objeto "item" y devuelve un array de objetos con "label" y "valor" para mostrar los datos
+    // Función que formatea los datos de cada item para mostrarlos en la lista
+    // Devuelve un array de objetos con label y valor según el tipo
     const obtenerDatos = (item) => {
-        //verificar que todos los nombres de .valor coincidan con el backend
         if (tipo === 'lugares') {
-            return [ //Datos de previsualización para lugares. Rol de productor
-                { label: 'N° Registro ICA', valor: item.registroICA },
-                { label: 'Área Total', valor: item.areaTotal + ' Ha' },
-                { label: 'Área Cultivada', valor: item.areaCultivada + ' Ha' },
-                { label: 'Predio Central', valor: item.predioCentral }
+            return [
+                { label: 'N° Registro ICA', valor: item.numero_registro },
+                { label: 'Área Total', valor: (item.areaTotal || 0) + ' Ha' },
+                { label: 'Área Cultivada', valor: (item.areaCultivada || 0) + ' Ha' },
+                { label: 'Predio Central', valor: item.predioCentral?.nombre || 'N/A' }
             ];
         }
-            //Datos de previsualización para lotes. Rol de productor. Colocar los datos correctos
         if (tipo === 'lotes') {
             return [
-                { label: 'N° Lote', valor: item.numero},
-                { label: 'Área', valor: item.area + 'Ha'},
-                { label: 'Cultivo', valor: item.tipoCultivo},
-                { label: 'Cantidad de plantas', valor: item.cantidadPlantas},
-                { label: 'Fecha de siembra', valor: item.fechaSiembra},
-                { label: 'Fecha de recolección', valor: item.fechaRecoleccion}
+                { label: 'N° Lote', valor: item.numero },
+                { label: 'Área', valor: (item.area || 0) + ' Ha' },
+                { label: 'Cultivo', valor: item.tipoCultivo },
+                { label: 'Cantidad de plantas', valor: item.cantidadPlantas },
+                { label: 'Fecha de siembra', valor: item.fechaSiembra },
+                { label: 'Fecha de recolección', valor: item.fechaRecoleccion }
             ];
         }
-            //Datos de previsualización para predios. Rol de propietario. Colocar los datos correctos
         if (tipo === 'predios') {
             return [
-                { label: 'N° Registro ICA', valor: item.registroICA },
-                { label: 'Área', valor: item.area + ' Ha' },
-                { label: 'Departamento', valor: item.departamento},
-                { label: 'Municipio', valor: item.municipio },
-                { label: 'Vereda/dirección', valor: item.vereda},
-                { label: 'Lugar de producción', valor: item.lugarProduccion}
-
+                { label: 'N° Registro', valor: item.numero_registro },
+                { label: 'Nombre', valor: item.nombre },
+                { label: 'Área', valor: (item.area || 0) + ' Ha' },
+                { label: 'Municipio', valor: item.municipio?.nombre || 'N/A' },
+                { label: 'Dirección', valor: item.direccion},
+                { label: 'Lugar de Producción', valor: item.lugar_produccion?.nombre || 'Sin asignar' }
             ];
         }
-
         return [];
     };
 
-   //función temporal para agregar un lugar, predio o lote
-   //Borrarlo e importar el archvio frontend cuando esté listo
+    // Funciones para manejar los eventos de la UI
     const handleAgregar = () => {
-        alert(`Agregar nuevo ${tipo}`);
+        setItemEditando(null); // No hay item para editar (es creación)
+        setModo('crear'); // Cambia al modo de creación
     };
 
-    // Renderizado del componente
+    const handleEditar = (item) => {
+        setItemEditando(item); // Guarda el item que se va a editar
+        setModo('crear'); // Usa el mismo modo 'crear' pero con modoEdicion=true
+    };
+
+    const handleEliminar = (item) => {
+    setItemEditando(item); // guarda el item a eliminar
+    setModo('eliminar');   // cambia al modo eliminar
+    };
+
+    const handleAsociar = (item) => {
+        setItemEditando(item); // Guarda el predio que se va a asociar
+        setModo('asociar'); // Cambia al modo de asociación
+    };
+
+    const handleDesasociar = (item) => {
+        setItemEditando(item); // quita el predio que se va a desasociar
+        setModo('desasociar'); // Cambia al modo de desasociación
+    };
+
+    const handleVerPredios = (item) => {
+    setItemEditando(item);
+    setModo('prediosAsociados');
+    };
+
+    // Función que refresca los datos después de una operación exitosa
+    // Se llama desde el formulario cuando se crea/edita/asocia algo
+    const refrescarDatos = () => {
+        setCargando(true); // Muestra "Cargando..." mientras se obtienen los datos
+        fetchDatos(); // Vuelve a cargar los datos del backend
+    };
+
     return (
         <section className="production-panel">
-
-            <h2 className="panel-title">{/* Título dinámico según el tipo de datos que se muestra */}
-                {/* El título cambia según el valor de tipo, si "tipo" es "lugares", se muestra "Lugares de Producción" y así sucesivamente */}
+            {/* Título dinámico según el tipo */}
+            <h2 className="panel-title">
                 {tipo === 'lugares' && 'Lugares de Producción'}
                 {tipo === 'lotes' && 'Lotes'}
                 {tipo === 'predios' && 'Predios'}
             </h2>
 
-            {/*Mostrar mensaje de carga cuando está cargando la información */}
-            {/*Después de cargar, si no hay registros mostrar el mensaje "No hay registros." */}
-            {/* */}
-            {cargando ? (
-                <p>Cargando...</p>
-            ) : lugares.length === 0 ? ( 
-                <p>No hay registros.</p>
-            ) : (
+            {/* Modo lista: muestra la tabla de datos */}
+            {modo === 'lista' && (
+                <>
+                    {cargando ? (
+                        <p>Cargando...</p>
+                    ) : lugares.length === 0 ? (
+                        <p>No hay registros.</p>
+                    ) : (
+                        <ListaTerrenos
+                            lugares={lugares}
+                            tipo={tipo}
+                            obtenerDatos={obtenerDatos}
+                            onEditar={handleEditar}
+                            onEliminar={handleEliminar}
+                            onAsociar={handleAsociar}
+                            onDesasociar={handleDesasociar}
+                            onVerPredios={handleVerPredios}
+                        />
+                    )}
 
-                lugares.map((item) => (
-                    // key para identificar cada elemento de la lista y optimizar el render.
-                    <div key={item.id} className="horizontal-card">
-
-                        {/* Visualización a la izquierda */}
-                        <div className="card-left-section">
-                            <h3>
-                                {/* Si es lote se usa el número del mismo */}
-                                {/* Si no, se usa el nombre */}
-                                {tipo === 'lotes'? `Lote ${item.numero}`: item.nombre}
-                            </h3>
-
-                            <div className="card-actions"> {/*Botones para implementar edición y eliminación */}
-                                <button className="icon-btn edit-btn">Editar</button>
-                                <button className="icon-btn delete-btn">Eliminar</button>
-                            </div>
-                        </div>
-
-                        {/* Datos dinámicos, detalles de cada elemento */}
-                        <div className="card-details-section">
-                            {obtenerDatos(item).map((dato, index) => (
-                                <p key={index}> {/*label -> el nombre del campo. valor -> el dato*/}
-                                    <strong>{dato.label}:</strong> {dato.valor}
-                                </p>
-                            ))}
-                        </div>
-
-                        {/* Sección de botones a la derecha */}
-                        <div className="card-button-section">
-
-                            {tipo === 'lugares' && (
-                                <> 
-                                    <button className="btn-action">Predios asociados</button>
-                                    <button className="btn-action">Lotes actuales</button>
-                                </>
-                            )}
-
-                            {tipo === 'lotes' && ( // Definir qué botones se mostrarán para los lotes
-                                <button className="btn-action">Ver detalle</button>
-                            )}
-
-                            {tipo === 'predios' && (
-                                <>
-                                <button className="btn-action">Asociar a lugar de producción</button>
-                                <button className="btn-action">Desasociar de lugar de producción</button>
-                                </>
-                            )}
-
-                        </div>
-
-                    </div>
-                ))
+                    {/* Botón flotante para agregar nuevos items */}
+                    <button className="fab-add" onClick={handleAgregar}>
+                        +
+                    </button>
+                </>
             )}
 
-            {/* botón para agregar nuevos elementos (lugares, predios o lotes) */}
-            <button className="fab-add" onClick={handleAgregar}>
-                +
-            </button>
+            {/* Modo crear/editar: muestra el formulario */}
+            {modo === 'crear' && (
+                <FormularioTerreno
+                    tipo={tipo}
+                    onExito={refrescarDatos} // Refresca la lista después de guardar
+                    onCancelar={() => {
+                        setItemEditando(null);
+                        setModo('lista');
+                    }}
+                    modoEdicion={itemEditando !== null}
+                    itemEditar={itemEditando}
+                />
+            )}
 
+            {/* Modo asociar: muestra el formulario de asociación */}
+            {modo === 'asociar' && (
+                <FormularioTerreno
+                    tipo="asociar"
+                    onExito={refrescarDatos} // Refresca la lista después de asociar
+                    onCancelar={() => {
+                        setItemEditando(null);
+                        setModo('lista');
+                    }}
+                    itemEditar={itemEditando}
+                />
+            )}
+
+            {/* Modo desasociar: usa el formulario para desasociar con backend */}
+            {/* Modo eliminar: usa el formulario para confirmar eliminación con backend */}
+            {(modo === 'desasociar' || modo === 'eliminar') && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <FormularioTerreno
+                            tipo={modo}
+                            tipoOriginal={tipo}
+                            onExito={() => {
+                                setItemEditando(null);
+                                setModo('lista');
+                                refrescarDatos();
+                            }}
+                            onCancelar={() => {
+                                setItemEditando(null);
+                                setModo('lista');
+                            }}
+                            itemEditar={itemEditando}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {modo === 'prediosAsociados' && (
+                <PrediosAsociados
+                    lugar={itemEditando}
+                    onVolver={() => {
+                        setItemEditando(null);
+                        setModo('lista');
+                        refrescarDatos();
+                    }}
+                />
+            )}
         </section>
     );
 }
 
 export default LugaresProduccion;
-

@@ -1,4 +1,4 @@
-/* --- ESTILOS CORREGIDOS: LUGARES DE PRODUCCIÓN --- */
+
 
 /* Estilo para el panel blanco central */
 .production-panel {
@@ -41,7 +41,7 @@
 .card-left-section h3 {
     margin: 0;
     color: #333;
-    font-size: 1.1rem;
+    font-size: 1.1rem; 
 }
 
 .card-actions {
@@ -158,4 +158,154 @@
     .card-button-section {
         align-items: center;
     }
+}
+
+
+.formulario {
+    background-color: #f8f9fa; /* mismo estilo que las tarjetas */
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 25px;
+    margin-top: 20px;
+}
+
+/* Título del formulario */
+.formulario h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #1a5e30;
+}
+
+/* Inputs del formulario */
+.formulario input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #8e949a;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Contenedor de botones */
+.formulario .contenedor-botones {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* Botón guardar y cancelar*/
+.botones {
+    background-color: #2e8b57;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    flex: 1;
+    transition: background 0.3s;
+}
+
+.botones:hover {
+    background-color: #1a5e30;
+}
+
+/* Responsive para formulario */
+@media (max-width: 768px) {
+    .formulario .contenedor-botones {
+        flex-direction: column;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* ESTILOS PARA pantallas emergentes (desasociar, eliminar) */
+/* ═══════════════════════════════════════════════════════════════ */
+
+/* Overlay oscuro de fondo */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* Por encima de todo */
+}
+
+/* Contenido del modal */
+.modal-content {
+    position: absolute;   /* 👈 clave */
+    top: 20px;
+    right: 30  0px;
+
+    background-color: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Animación de entrada del modal */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Título De advertencia */
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #d9534f;
+    font-size: 1.3rem;
+}
+
+/* Párrafos del modal */
+.modal-content p {
+    margin: 10px 0;
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Strong dentro del modal */
+.modal-content strong {
+    color: #1a5e30;
+}
+
+
+/*Para el botón regresa <-*/
+.volver-container {
+    margin-bottom: 15px;
+}
+
+.fab-back {
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--verde-boton);
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: 0.2s ease;
+}
+
+.fab-back:hover {
+    transform: scale(1.08);
 }
