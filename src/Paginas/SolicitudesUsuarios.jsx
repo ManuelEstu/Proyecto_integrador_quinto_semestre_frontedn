@@ -8,6 +8,10 @@ import './SolicitudesUsuarios.css';
  */
 function UsuariosFuncionario() {
 
+    useEffect(() => {
+        document.title = "Solicitudes acceso";
+    }, []);
+
     // Estado que almacenará la lista de usuarios
     const [usuarios, setUsuarios] = useState([]);
     
@@ -169,13 +173,6 @@ function UsuariosFuncionario() {
                     <option value="propietario">Propietario</option>
                 </select>
 
-                {/* Filtro por estado */}
-                <select onChange={(e) => setFiltroEstado(e.target.value)}>
-                    <option value="">Todos los estados</option>
-                    <option value="Pendiente">Pendiente</option>
-                    <option value="Activo">Activo</option>
-                    <option value="Eliminado">Eliminado</option>
-                </select>
 
             </div>
 

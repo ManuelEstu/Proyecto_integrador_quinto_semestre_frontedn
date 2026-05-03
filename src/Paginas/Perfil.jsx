@@ -33,6 +33,69 @@ function Perfil() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+        // ─── funcion para guardar los cambios ───────
+    const guardarCambios = async (e) => {
+        e.preventDefault(); // Evita que la página se recargue al enviar el formulario
+
+        // 1. Obtener el token de autenticación
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('No estás autenticado');
+            return;
+        }
+
+        // 2. Para enviarle los datos a el backend
+        const datosParaBackend = {
+            nombre: formData.nombres,
+            apellido: formData.apellidos,
+            direccion: formData.direccion,
+            telefono: formData.telefono,
+            email: formData.correo,
+            password: formData.clave
+        };
+
+        try {
+            // 3. Hacer la petición PATCH al backend
+            const respuesta = await fetch('http://localhost:3001/api/users/editProfile', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Aquí enviamos el token
+                },
+                body: JSON.stringify(datosParaBackend)
+            });
+
+            const data = await respuesta.json();
+
+            if (respuesta.ok) {
+                alert('Perfil actualizado con éxito');
+                
+                // 4. Actualizar localStorage para que al recargar no se pierdan los cambios
+                // Actualizamos solo los campos que cambiaron, conservando el resto (ej. el token)
+                const usuarioActualizado = {
+                    ...usuarioGuardado,
+                    nombre: formData.nombres,
+                    apellido: formData.apellidos,
+                    direccion_residencia: formData.direccion,
+                    telefono: formData.telefono,
+                    correo_electronico: formData.correo,
+                    clave: formData.clave
+                };
+                localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+
+                // 5. Apagar el modo edición
+                setIsEditing(false);
+            } else {
+                // Mostrar el error que viene del backend (ej. Zod o tu AppError)
+                alert(`Error: ${data.message || 'No se pudo actualizar'}`);
+            }
+
+        } catch (error) {
+            console.error('Error de red:', error);
+            alert('Error de conexión con el servidor');
+        }
+    };
+
     // ─── Campos del formulario ───────────────────────────────────────────────
     const campos = [
         { label: 'CC:',        name: 'cc',        val: formData.cc,        disabled: true },
@@ -53,7 +116,7 @@ function Perfil() {
                         <img src={fotoDefecto} alt="Perfil" className="imagen-perfil" />
                     </div>
 
-                    <form className="formulario-perfil">
+                    <form className="formulario-perfil" onSubmit={guardarCambios}>
                         {campos.map((item) => (
                             <div className="grupo-campo" key={item.name}>
                                 <label>{item.label}</label>

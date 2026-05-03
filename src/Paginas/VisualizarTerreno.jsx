@@ -4,6 +4,7 @@ import ListaTerrenos from './ListarTerrenos';
 import FormularioTerreno from './FormulariosCrearTerrenos';
 import PrediosAsociados from './PrediosAsociados';
 
+
 // Componente principal que maneja la gestión de lugares de producción, lotes y predios
 // Recibe 'tipo' como prop para determinar qué tipo de entidad mostrar
 function LugaresProduccion({ tipo }) {
@@ -19,7 +20,6 @@ function LugaresProduccion({ tipo }) {
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('usuario'));
         const BASE_URL = 'http://localhost:3001/api';
-
         try {
             let url;
 
@@ -69,6 +69,7 @@ function LugaresProduccion({ tipo }) {
     // Función que formatea los datos de cada item para mostrarlos en la lista
     // Devuelve un array de objetos con label y valor según el tipo
     const obtenerDatos = (item) => {
+        console.log("Datos obtenidos: ", item.predioCentral);
         if (tipo === 'lugares') {
             return [
                 { label: 'N° Registro ICA', valor: item.numero_registro },
