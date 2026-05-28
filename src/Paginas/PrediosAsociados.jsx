@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './VisualizarTerrenos.css';
+import config from '../config/env.config.js';
 
-const BASE_URL = 'http://localhost:3001/api';
+const BASE_URL = config.URL_BACKEND_ENTITIES_SERVICE;
 
 function PrediosAsociados({ lugar, onVolver }) {
 
@@ -21,7 +22,7 @@ function PrediosAsociados({ lugar, onVolver }) {
                         }
                     }
                 );
-                 const data = await res.json();
+                const data = await res.json();
                 if (data.status === 'success') {
                     setPredios(data.data);
                 }

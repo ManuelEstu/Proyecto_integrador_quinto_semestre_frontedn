@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../assets/imagenes/logo.png';
+import logo from '../assets/principales/logo-principal.webp';
 import './Login.css';
+import config from '../config/env.config.js';
 
+const BASE_URL = config.URL_BACKEND_ENTITIES_SERVICE;
 function Login() {
 
   // ─── Título de la pestaña ───────────────────────────────────────────────────
@@ -34,7 +36,7 @@ function Login() {
     setMostrarContrasena(prev => !prev);
   };
 
-  const BASE_URL = 'http://localhost:3001/api'; // 🔧 Reemplaza con tu URL real
+  const BASE_URL = config.URL_BACKEND_ENTITIES_SERVICE; // 🔧 Reemplaza con tu URL real
 
 
   // ─── Manejador del envío del formulario ────────────────────────────────────
@@ -105,7 +107,7 @@ function Login() {
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="contenedor-pagina-login">
-      <div className="contenedor-login">
+      <div className="contenedor-logo-card">
 
         {/* Logo institucional */}
         <div className="encabezado-logo">
@@ -113,8 +115,8 @@ function Login() {
         </div>
 
         {/* Tarjeta del formulario */}
-        <div className="tarjeta-login">
-          <h2>Iniciar Sesión</h2>
+        <div className="card">
+          <h2 className="card-title">Iniciar Sesión</h2>
 
           {/*
            * onSubmit apunta al manejador asíncrono que llama al backend.
@@ -124,9 +126,10 @@ function Login() {
           <form onSubmit={manejarEnvio} noValidate>
 
             {/* ── Campo: Tipo de usuario ────────────────────────────────── */}
-            <div className="grupo-campo">
-              <label htmlFor="tipo-usuario">Tipo de usuario:</label>
+            <div className="form-group">
+              <label className="label-base" htmlFor="tipo-usuario">Tipo de usuario:</label>
               <select
+                className="input-base"
                 id="tipo-usuario"
                 name="tipo-usuario"
                 value={tipoUsuario}
@@ -140,9 +143,10 @@ function Login() {
             </div>
 
             {/* ── Campo: Nombre de usuario ──────────────────────────────── */}
-            <div className="grupo-campo">
-              <label htmlFor="usuario">Nombre usuario:</label>
+            <div className="form-group">
+              <label className="label-base" htmlFor="usuario">Correo electrónico:</label>
               <input
+              className="input-base"
                 type="text"
                 id="usuario"
                 name="usuario"
@@ -153,10 +157,11 @@ function Login() {
             </div>
 
             {/* ── Campo: Contraseña con botón de visibilidad ────────────── */}
-            <div className="grupo-campo">
-              <label htmlFor="contrasena">Contraseña:</label>
+            <div className="form-group">
+              <label className="label-base" htmlFor="contrasena">Contraseña:</label>
               <div className="contenedor-contrasena">
                 <input
+                 className="input-base"
                   type={mostrarContrasena ? 'text' : 'password'}
                   id="contrasena"
                   name="contrasena"
@@ -206,7 +211,7 @@ function Login() {
                */}
               <button
                 type="submit"
-                className="boton-ingresar"
+                className="btn-primary"
                 disabled={cargando}
               >
                 {cargando ? 'Ingresando...' : 'Iniciar Sesión'}

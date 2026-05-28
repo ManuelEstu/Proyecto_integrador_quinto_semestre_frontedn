@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import fotoDefecto from '../assets/Imagenes/Foto defecto.webp';
+import fotoDefecto from '../assets/principales/perfil.webp';
 import './Perfiles.css';
+import config from '../config/env.config.js';
 
-const BASE_URL = 'http://localhost:3001/api';
+const BASE_URL = config.URL_BACKEND_ENTITIES_SERVICE;
 
 function PerfilTecnico() {
 
@@ -107,19 +108,20 @@ function PerfilTecnico() {
     return (
         <div className="contenedor-pantalla-perfil">
             <main className="contenido-principal">
-                <section className="tarjeta-perfil">
-                    <h2 className="titulo-perfil">Información Personal</h2>
+                <section className="card">
+                    <h2 className="card-title">Información Personal</h2>
 
                     <div className="contenedor-avatar">
                         <img src={fotoDefecto} alt="Perfil" className="imagen-perfil" />
                     </div>
 
-                    <form className="formulario-perfil">
+                    <form >{/* falta onSubmit={guardarCambios} */}
 
                         {campos.map((item) => (
-                            <div className="grupo-campo" key={item.name}>
-                                <label>{item.label}</label>
+                            <div className="form-group" key={item.name}>
+                                <label className="label-base">{item.label}</label>
                                 <input
+                                    className='input-base'
                                     type="text"
                                     name={item.name}
                                     value={item.val}
@@ -131,10 +133,10 @@ function PerfilTecnico() {
 
                         {/* ── Campo Departamento (solo visible al editar) ───── */}
                         {isEditing && (
-                            <div className="grupo-campo">
-                                <label>Departamento:</label>
+                            <div className="form-group">
+                                <label className="label-base">Departamento:</label>
                                 <select
-                                    className="select-perfil"
+                                    className="input-base"
                                     value={departamentoSeleccionado}
                                     onChange={handleDepartamentoChange}
                                 >
@@ -149,11 +151,11 @@ function PerfilTecnico() {
                         )}
 
                         {/* ── Campo Municipio ───────────────────────────────── */}
-                        <div className="grupo-campo">
-                            <label>Municipio:</label>
+                        <div className="form-group">
+                            <label className="label-base">Municipio:</label>
                             {isEditing ? (
                                 <select
-                                    className="select-perfil"
+                                    className="input-base"
                                     value={municipioSeleccionado}
                                     onChange={(e) => setMunicipioSeleccionado(e.target.value)}
                                     disabled={!departamentoSeleccionado}
@@ -170,15 +172,17 @@ function PerfilTecnico() {
                                     type="text"
                                     value={nombreMunicipioActual}
                                     disabled
+                                    className='input-base'
                                 />
                             )}
                         </div>
 
                         {/* ── Campo Contraseña ─────────────────────────────── */}
-                        <div className="grupo-campo">
-                            <label>Contraseña:</label>
-                            <div className="contenedor-contrasena-perfil">
+                        <div className="form-group">
+                            <label className="label-base">Contraseña:</label>
+                            <div className="contenedor-contrasena">
                                 <input
+                                    className='input-base'
                                     type={mostrarContrasena ? 'text' : 'password'}
                                     name="clave"
                                     value={formData.clave}
@@ -186,7 +190,7 @@ function PerfilTecnico() {
                                     disabled={!isEditing}
                                 />
                                 <span
-                                    className="boton-visibilidad-perfil"
+                                    className="boton-visibilidad"
                                     onClick={alternarContrasena}
                                     role="button"
                                     aria-label={mostrarContrasena ? 'Ocultar contraseña' : 'Mostrar contraseña'}
@@ -210,7 +214,7 @@ function PerfilTecnico() {
                         <div className="contenedor-botones">
                             <button
                                 type="button"
-                                className="boton-editar"
+                                className=" btn-primary"
                                 onClick={() => setIsEditing(prev => !prev)}
                             >
                                 {isEditing ? 'Cancelar' : 'Editar perfil'}
@@ -218,7 +222,7 @@ function PerfilTecnico() {
 
                             <button
                                 type="submit"
-                                className={`boton-guardar ${isEditing ? 'activo' : ''}`}
+                                className={`btn-primary ${isEditing ? 'activo' : ''}`}
                                 disabled={!isEditing}
                             >
                                 Guardar cambios

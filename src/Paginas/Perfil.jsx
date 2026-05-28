@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import fotoDefecto from '../assets/Imagenes/Foto defecto.webp';
+import fotoDefecto from '../assets/principales/perfil.webp';
 import './Perfiles.css';
+import config from '../config/env.config.js';
 
+const BASE_URL = config.URL_BACKEND_ENTITIES_SERVICE;
 function Perfil() {
 
     useEffect(() => {
@@ -56,7 +58,7 @@ function Perfil() {
 
         try {
             // 3. Hacer la petición PATCH al backend
-            const respuesta = await fetch('http://localhost:3001/api/users/editProfile', {
+            const respuesta = await fetch(`${BASE_URL}/users/editProfile`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,18 +111,19 @@ function Perfil() {
     return (
         <div className="contenedor-pantalla-perfil">
             <main className="contenido-principal">
-                <section className="tarjeta-perfil">
-                    <h2 className="titulo-perfil">Información Personal</h2>
+                <section className="card">
+                    <h2 className="card-title">Información Personal</h2>
 
                     <div className="contenedor-avatar">
                         <img src={fotoDefecto} alt="Perfil" className="imagen-perfil" />
                     </div>
 
-                    <form className="formulario-perfil" onSubmit={guardarCambios}>
+                    <form onSubmit={guardarCambios}>
                         {campos.map((item) => (
-                            <div className="grupo-campo" key={item.name}>
-                                <label>{item.label}</label>
+                            <div className="form-group" key={item.name}>
+                                <label className="label-base">{item.label}</label>
                                 <input
+                                    className='input-base'
                                     type="text"
                                     name={item.name}
                                     value={item.val}
@@ -131,10 +134,11 @@ function Perfil() {
                         ))}
 
                         {/* ── Campo Contraseña ─────────────────────────────── */}
-                        <div className="grupo-campo">
-                            <label>Contraseña:</label>
-                            <div className="contenedor-contrasena-perfil">
+                        <div className="form-group">
+                            <label className="label-base">Contraseña:</label>
+                            <div className="contenedor-contrasena">
                                 <input
+                                    className='input-base'
                                     type={mostrarContrasena ? 'text' : 'password'}
                                     name="clave"
                                     value={formData.clave}
@@ -142,7 +146,7 @@ function Perfil() {
                                     disabled={!isEditing}
                                 />
                                 <span
-                                    className="boton-visibilidad-perfil"
+                                    className="boton-visibilidad"
                                     onClick={alternarContrasena}
                                     role="button"
                                     aria-label={mostrarContrasena ? 'Ocultar contraseña' : 'Mostrar contraseña'}
@@ -166,7 +170,7 @@ function Perfil() {
                         <div className="contenedor-botones">
                             <button
                                 type="button"
-                                className="boton-editar"
+                                className="btn-primary"
                                 onClick={() => setIsEditing(prev => !prev)}
                             >
                                 {isEditing ? 'Cancelar' : 'Editar perfil'}
@@ -174,7 +178,7 @@ function Perfil() {
 
                             <button
                                 type="submit"
-                                className={`boton-guardar ${isEditing ? 'activo' : ''}`}
+                                className="btn-primary"
                                 disabled={!isEditing}
                             >
                                 Guardar cambios

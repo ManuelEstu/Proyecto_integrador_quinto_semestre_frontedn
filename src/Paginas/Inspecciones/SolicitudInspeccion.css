@@ -1,0 +1,59 @@
+
+/* Grupo radios */
+.grupo-opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin-top: 8px;
+    margin-bottom: 20px;
+}
+
+/* Opción individual */
+.opcion-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: var(--text-sm);
+    color: var(--color-texto);
+
+    cursor: pointer;
+}
+
+/* Radio button */
+.opcion-radio input[type="radio"] {
+    width: auto;
+    margin: 0;
+    accent-color: var(--verde-ica);
+}
+
+/* Textarea personalizada */
+.textarea-base {
+    height: auto;
+    min-height: 100px;
+
+    padding: 10px;
+
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Texto auxiliar */
+.texto-cargando {
+    font-size: 13px;
+    color: var(--texto-disabled);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+
+    .contenedor-pagina-registro {
+        padding: 15px;
+    }
+
+    .card {
+        min-width: 100%;
+    }
+
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
-const BASE_URL = 'http://localhost:3001/api';
+import config from '../config/env.config.js';
+const BASE_URL = config.URL_BACKEND_ENTITIES_SERVICE;
 
 // Componente que muestra el formulario para crear/editar lugares, lotes y predios,
 // y también para asociar un predio a un lugar de producción.

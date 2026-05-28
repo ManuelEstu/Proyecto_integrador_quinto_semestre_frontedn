@@ -3,6 +3,8 @@ import './VisualizarTerrenos.css';
 import ListaTerrenos from './ListarTerrenos';
 import FormularioTerreno from './FormulariosCrearTerrenos';
 import PrediosAsociados from './PrediosAsociados';
+import config from '../config/env.config.js';
+const BASE_URL = config.URL_BACKEND_ENTITIES_SERVICE;
 
 
 // Componente principal que maneja la gestión de lugares de producción, lotes y predios
@@ -19,7 +21,7 @@ function LugaresProduccion({ tipo }) {
     const fetchDatos = async () => {
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('usuario'));
-        const BASE_URL = 'http://localhost:3001/api';
+
         try {
             let url;
 
@@ -101,7 +103,7 @@ function LugaresProduccion({ tipo }) {
         return [];
     };
 
-    // Funciones para manejar los eventos de la UI
+    // Funciones para manejar los eventos 
     const handleAgregar = () => {
         setItemEditando(null); // No hay item para editar (es creación)
         setModo('crear'); // Cambia al modo de creación

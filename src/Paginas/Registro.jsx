@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/imagenes/logo.png';
+import logo from '../assets/principales/logo-principal.webp';
 import './Registro.css';
+import config from '../config/env.config.js';
 
-const BASE_URL = 'http://localhost:3001/api';
+const BASE_URL = config.URL_BACKEND_ENTITIES_SERVICE;
 
 /**
  * Componente de Registro de usuarios para el sistema ICA
@@ -175,17 +176,19 @@ function Registro() {
     // ==================== RENDER ====================
     return (
         <div className="contenedor-pagina-registro">
-            <header className="cabecera-logo">
-                <img src={logo} alt="Logo ICA" className="logo-principal" />
-            </header>
+            <div className="contenedor-logo-card">
+                <header className="cabecera-logo">
+                    <img src={logo} alt="Logo ICA" className="logo-principal" />
+                </header>
 
-            <div className="contenedor-formulario">
+            <div className="card">
                 <main>
-                    <h1>Registro</h1>
+                    <h1 className="card-title">Registro</h1>
 
                     <form onSubmit={handleSubmit}>
-                        <label htmlFor="tipo_usuario">Tipo de usuario:</label>
+                        <label className='label-base' htmlFor="tipo_usuario">Tipo de usuario:</label>
                         <select
+                            className="input-base"
                             id="tipo_usuario"
                             value={tipoUsuario}
                             onChange={handleTipoUsuarioChange}
@@ -195,8 +198,9 @@ function Registro() {
                             <option value="Tecnico">Técnico</option>
                         </select>
 
-                        <label htmlFor="nit">(*) Cédula / NIT:</label>
+                        <label className="label-base" htmlFor="nit">(*) Cédula / NIT:</label>
                         <input
+                            className='input-base'
                             type="text"
                             id="nit"
                             value={nit}
@@ -204,8 +208,9 @@ function Registro() {
                             required
                         />
 
-                        <label htmlFor="nombre">(*) Nombres:</label>
+                        <label className='label-base' htmlFor="nombre">(*) Nombres:</label>
                         <input
+                            className='input-base'
                             type="text"
                             id="nombre"
                             value={nombre}
@@ -213,8 +218,9 @@ function Registro() {
                             required
                         />
 
-                        <label htmlFor="apellido">(*) Apellidos:</label>
+                        <label className='label-base' htmlFor="apellido">(*) Apellidos:</label>
                         <input
+                            className='input-base'
                             type="text"
                             id="apellido"
                             value={apellido}
@@ -222,8 +228,9 @@ function Registro() {
                             required
                         />
 
-                        <label htmlFor="direccion">(*) Dirección:</label>
+                        <label className='label-base' htmlFor="direccion">(*) Dirección:</label>
                         <input
+                            className='input-base'
                             type="text"
                             id="direccion"
                             value={direccion}
@@ -231,8 +238,9 @@ function Registro() {
                             required
                         />
 
-                        <label htmlFor="telefono">(*) Nro Telefónico:</label>
+                        <label className='label-base' htmlFor="telefono">(*) Nro Telefónico:</label>
                         <input
+                            className='input-base'
                             type="tel"
                             id="telefono"
                             value={telefono}
@@ -240,8 +248,9 @@ function Registro() {
                             required
                         />
 
-                        <label htmlFor="email">(*) Correo Electrónico:</label>
+                        <label className='label-base' htmlFor="email">(*) Correo Electrónico:</label>
                         <input
+                            className='input-base'
                             type="email"
                             id="email"
                             value={email}
@@ -250,9 +259,10 @@ function Registro() {
                         />
 
                         {/* Campo Contraseña */}
-                        <label htmlFor="password">(*) Contraseña:</label>
+                        <label className='label-base' htmlFor="password">(*) Contraseña:</label>
                         <div className="contenedor-contrasena">
                             <input
+                                className='input-base'
                                 type={mostrarContrasena ? "text" : "password"}
                                 id="password"
                                 value={password}
@@ -270,9 +280,10 @@ function Registro() {
                         </div>
 
                         {/* Campo Confirmar Contraseña */}
-                        <label htmlFor="confirm_password">(*) Confirmar Contraseña:</label>
+                        <label className='label-base' htmlFor="confirm_password">(*) Confirmar Contraseña:</label>
                         <div className="contenedor-contrasena">
                             <input
+                                className='input-base'
                                 type={mostrarConfirmarContrasena ? "text" : "password"}
                                 id="confirm_password"
                                 value={confirmarPassword}
@@ -292,8 +303,9 @@ function Registro() {
                         {/* Campos solo para Técnicos */}
                         {esTecnico && (
                             <>
-                                <label htmlFor="tarjeta_profesional">(*) Tarjeta profesional:</label>
+                                <label className='label-base' htmlFor="tarjeta_profesional">(*) Tarjeta profesional:</label>
                                 <input
+                                    className='input-base'
                                     type="text"
                                     id="tarjeta_profesional"
                                     value={tarjetaProfesional}
@@ -301,8 +313,9 @@ function Registro() {
                                     required
                                 />
 
-                                <label htmlFor="departamento">(*) Departamento:</label>
+                                <label className='label-base' htmlFor="departamento">(*) Departamento:</label>
                                 <select
+                                    className='input-base'
                                     id="departamento"
                                     value={departamentoSeleccionado}
                                     onChange={handleDepartamentoChange}
@@ -316,8 +329,9 @@ function Registro() {
                                     ))}
                                 </select>
 
-                                <label htmlFor="municipio">(*) Municipio:</label>
+                                <label className='label-base' htmlFor="municipio">(*) Municipio:</label>
                                 <select
+                                    className='input-base'
                                     id="municipio"
                                     value={municipioSeleccionado}
                                     onChange={(e) => setMunicipioSeleccionado(e.target.value)}
@@ -334,13 +348,14 @@ function Registro() {
                             </>
                         )}
 
-                        <button type="submit" className="boton-registrar">Crear cuenta</button>
+                        <button type="submit" className="btn-primary">Crear cuenta</button>
                     </form>
 
                     <p className="texto-ya-tiene-cuenta">
                         ¿Ya tienes una cuenta? <Link className="regreso-login" to="/login">Iniciar Sesión</Link>
                     </p>
                 </main>
+            </div>
             </div>
         </div>
     );
