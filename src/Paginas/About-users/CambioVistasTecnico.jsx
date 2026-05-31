@@ -5,23 +5,21 @@ import './Perfiles.css';
 // Importas los JSX que ya tienes en Paginas/
 import PerfilTecnico from './PerfilTecnico';
 // Cuando los vayas creando los importas aquí:
-// import LugaresProduccion from './LugaresProduccion';
-// import SolicitarInspeccion from './SolicitarInspeccion';
-// import InspeccionesPendientes from './InspeccionesPendientes';
+import InspeccionesPendientesTecnico from '@/Paginas/Inspecciones/PendientesTecnico';
 // import InformesProduccion from './InformesProduccion';
 // import ResultadosInspecciones from './ResultadosInspecciones';
 
 const SECCIONES = {
     perfil:     <PerfilTecnico />,
     //lugares:    <PerfilTecnico />,
-    // pendientes: <InspeccionesPendientes />,
+    pendientes: <InspeccionesPendientesTecnico />,
     // informes:   <InformesProduccion />,
     // resultados: <ResultadosInspecciones />,
 };
 
 function CambioVistasProductor() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [seccionActiva, setSeccionActiva] = useState('perfil');
+    const [seccionActiva, setSeccionActiva] = useState('pendientes');
 
     const alternarSidebar = () => setIsSidebarOpen(prev => !prev);
 
