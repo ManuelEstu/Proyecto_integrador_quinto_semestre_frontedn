@@ -9,10 +9,10 @@ function InspeccionesPendientesTecnico(){
     const [inspecciones, setInspecciones] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
-    const [idFitoSeleccionada, setIdFitoSeleccionada] = useState(null);
     const [inspeccionTecnicaSeleccionada, setInspeccionTecnicaSeleccionada] = useState(null);
+    const [inspeccionFitoSeleccionada, setInspeccionFitoSeleccionada] = useState(null);
     const [filtroTipo, setFiltroTipo] = useState('');
-    const [filtroEstado, setFiltroEstado] = useState('');
+    const [filtroEstado, setFiltroEstado] = useState('');        
 
     const verPendientes = async () => {
         const token = localStorage.getItem('token');
@@ -28,6 +28,7 @@ function InspeccionesPendientesTecnico(){
             });
             if (!respuesta.ok) throw new Error('No se pudieron cargar las inspecciones pendientes.');
             const data = await respuesta.json();
+            console.log('Respuesta del backend:', data.data);
             setInspecciones(data.data || data || []);
             setCargando(false);
         } catch (err) {
@@ -46,7 +47,7 @@ function InspeccionesPendientesTecnico(){
 
     const solicitudesOrdenadas = [...inspecciones]
         .filter(s => {
-            // Ruta corregida: solicitud_inspeccion.tipo_inspeccion
+            // ✅ Ruta corregida: solicitud_inspeccion.tipo_inspeccion
             const tipo   = s.solicitud_inspeccion?.tipo_inspeccion?.toLowerCase() || '';
             const estado = s.estado?.toLowerCase() || '';
             const coincideTipo   = filtroTipo   === '' || tipo   === filtroTipo;
@@ -63,24 +64,29 @@ function InspeccionesPendientesTecnico(){
         if (tipo === 'inspeccion tecnica') {
             setInspeccionTecnicaSeleccionada(inspeccion);
         } else {
-            setIdFitoSeleccionada(inspeccion.idinspeccion);
+            setInspeccionFitoSeleccionada(inspeccion);
         }
     };
 
-    const regresarALista = () => {
-        setIdFitoSeleccionada(null);
-        setInspeccionTecnicaSeleccionada(null);
+    const refrescarInspecciones = () => {
+        verPendientes();
     };
 
-    if (idFitoSeleccionada !== null) {
+    const regresarALista = () => {
+        setInspeccionTecnicaSeleccionada(null);
+        setInspeccionFitoSeleccionada(null);
+    };
+
+    if (inspeccionFitoSeleccionada !== null) {
         return (
             <>
                 <div className="volver-container">
                     <button className="fab-back" onClick={regresarALista}><ArrowLeft size={26} /></button>
                 </div>
                 <InspeccionFitosanitariaGeneral
-                    idInspeccionSeleccionada={idFitoSeleccionada}
+                    inspeccionCompleta={inspeccionFitoSeleccionada}
                     onVolver={regresarALista}
+                    onRefresh={refrescarInspecciones}
                 />
             </>
         );
@@ -113,7 +119,7 @@ function InspeccionesPendientesTecnico(){
                     <option value="inspeccion fitosanitaria">Inspección Fitosanitaria</option>
                 </select>
 
-                {/* Filtro estado */}
+                {/* 🆕 Filtro estado */}
                 <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
                     <option value="">Todos los estados</option>
                     <option value="en proceso">En Proceso</option>
@@ -126,6 +132,8 @@ function InspeccionesPendientesTecnico(){
                     <tr>
                         <th>Fecha de realización</th>
                         <th>Lugar de producción</th>
+                        <th>direccion del lugar</th>
+                        <th>municipio del lugar</th>
                         <th>Tipo de Inspección</th>
                         <th>Productor del lugar</th>
                         <th>Estado</th>
@@ -134,13 +142,13 @@ function InspeccionesPendientesTecnico(){
                 </thead>
                 <tbody>
                     {cargando ? (
-                        <tr><td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>Cargando inspecciones pendientes...</td></tr>
+                        <tr><td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>Cargando inspecciones pendientes...</td></tr>
                     ) : error ? (
-                        <tr><td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>Error: {error}</td></tr>
-                    ) : solicitudesOrdenadas.length === 0 ? (   //  usa la lista filtrada
-                        <tr><td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>No hay inspecciones que coincidan con los filtros.</td></tr>
+                        <tr><td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>Error: {error}</td></tr>
+                    ) : solicitudesOrdenadas.length === 0 ? (   // ✅ usa la lista filtrada
+                        <tr><td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>No hay inspecciones que coincidan con los filtros.</td></tr>
                     ) : (
-                        solicitudesOrdenadas.map((inspeccion) => {   //  usa la lista filtrada
+                        solicitudesOrdenadas.map((inspeccion) => {   // ✅ usa la lista filtrada
                             const tipo = inspeccion.solicitud_inspeccion?.tipo_inspeccion?.toLowerCase() || '';
                             const estadoInspeccion = inspeccion.solicitud_inspeccion?.estado?.toLowerCase() || '';
                             let claseBotonBase = tipo === 'inspeccion tecnica' ? 'btn-tecnica' : 'btn-fitosanitaria';
@@ -150,7 +158,9 @@ function InspeccionesPendientesTecnico(){
                             return (
                                 <tr key={inspeccion.idinspeccion}>
                                     <td>{inspeccion.fechainicioinspeccion || '--'}</td>
-                                    <td>{inspeccion.lugarNombre || inspeccion.solicitud_inspeccion?.idlugarproduccion || '--'}</td>
+                                    <td>{inspeccion.lugarNombre || '--'}</td>
+                                    <td>{inspeccion.solicitud_inspeccion?.direccionLugar?.direccion || '--'}</td>
+                                    <td>{inspeccion.solicitud_inspeccion?.direccionLugar?.municipio || '--'}</td>
                                     <td>{inspeccion.solicitud_inspeccion?.tipo_inspeccion || '--'}</td>
                                     <td>{inspeccion.productorNombre || '--'}</td>
                                     <td className={`estado ${inspeccion.estado?.toLowerCase()}`}>
